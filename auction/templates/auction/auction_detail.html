@@ -1,0 +1,11 @@
+<div>
+    <p>{{ auction.title }}</p>
+    <img src="{{ auction.image.url }}" width="300px">
+    <p>{{ auction.start_bid }}$</p>
+    <p>{{ auction.created }}</p>
+    <p>{{ auction.seller }}</p>
+    <p>{{ auction.created }}</p>
+    <p>{{ auction.finished }}</p>
+</div>
+
+{% include "auction/auction_place_bid.html" %}

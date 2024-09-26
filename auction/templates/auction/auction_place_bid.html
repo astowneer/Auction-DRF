@@ -1,0 +1,6 @@
+<form method="post" action="{% url 'place_bid' auction.pk %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Bid">
+</form>
+ 
