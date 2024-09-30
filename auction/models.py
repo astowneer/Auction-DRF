@@ -19,7 +19,7 @@ class Auction(models.Model):
     image = models.ImageField(upload_to="auctions", blank=True, null=True)
     start_bid = models.PositiveIntegerField()
     min_bid_increment = models.PositiveIntegerField(default=1)
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(blank=True, null=True)
     finished = models.DateTimeField(blank=True, null=True)
     seller = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="auctions")
     active = models.BooleanField(default=True)

@@ -106,3 +106,4 @@ class PlaceBidView(FormView):
 
     def get_success_url(self):
         return reverse_lazy("auction_detail", kwargs={"pk": self.kwargs["auction_pk"]})
+    

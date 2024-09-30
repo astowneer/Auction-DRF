@@ -23,3 +23,4 @@ class PlaceBidForm(forms.ModelForm):
                     f"The bid must be greater than the current highest bid ({current_highest_bid}) plus the minimum increment ({min_bid_increment})."
                 )
         return bid
+    

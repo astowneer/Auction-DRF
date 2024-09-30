@@ -1,11 +1,50 @@
 <div>
     <p>{{ auction.title }}</p>
     <img src="{{ auction.image.url }}" width="300px">
-    <p>{{ auction.start_bid }}$</p>
+    <p id="currentBid">{{ auction.start_bid }}$</p>
     <p>{{ auction.created }}</p>
     <p>{{ auction.seller }}</p>
-    <p>{{ auction.created }}</p>
     <p>{{ auction.finished }}</p>
+    <p>Remaining time: <span id="remainingTime"></span></p> <!-- Placeholder for remaining time -->
 </div>
 
+<!-- The form for placing a bid -->
+
 {% include "auction/auction_place_bid.html" %}
+
+<!-- Add the JavaScript logic -->
+<script>
+    // Step 1: Establish WebSocket connection for real-time bidding
+    const auctionId = {{ auction.id }};  // Get the auction ID dynamically from the context
+    const bidSocket = new WebSocket(`ws://${window.location.host}/ws/auction/${auctionId}/`);  // WebSocket connection
+
+    // Step 2: Handle incoming messages from WebSocket
+    bidSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);  // Parse incoming message
+        document.querySelector("#currentBid").textContent = data.bid + "$";  // Update the current bid value in the UI
+        document.querySelector("#remainingTime").textContent = formatTime(data.remaining_time);  // Update the remaining time
+    };
+
+    // Step 3: Handle WebSocket connection closure (for debugging purposes)
+    bidSocket.onclose = function(e) {
+        console.error("Bid WebSocket closed unexpectedly.");
+    };
+
+    // Step 4: Function to place a bid via WebSocket
+    function placeBid() {
+        const bid = document.querySelector("#bidInput").value;  // Get the bid amount from the input field
+        if (bid) {  // Ensure that a bid value exists
+            bidSocket.send(JSON.stringify({"bid": bid}));  // Send bid data to the WebSocket server
+            document.querySelector("#bidInput").value = "";  // Clear the bid input field after submission
+        } else {
+            alert("Please enter a valid bid!");  // Simple validation feedback
+        }
+    }
+
+    // Step 5: Helper function to format remaining time in minutes and seconds
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);  // Calculate the minutes
+        const remainingSeconds = seconds % 60;  // Calculate the seconds
+        return `${minutes} minutes and ${remainingSeconds} seconds`;  // Return formatted time
+    }
+</script>
