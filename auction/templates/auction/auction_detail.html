@@ -1,3 +1,8 @@
+<div>{% if seller_message %}{{request.user}} {{seller_message}}{% endif %}</div>
+<div>{% if bidder_won_message %}{{request.user}} {{bidder_won_message}}{% endif %}</div>
+
+<h1>Detail</h1>
+
 <div>
     <p>{{ auction.title }}</p>
     <img src="{{ auction.image.url }}" width="300px">
@@ -9,8 +14,19 @@
 </div>
 
 <!-- The form for placing a bid -->
+{% if auction.active %}
+    {% include "auction/auction_place_bid.html" %}
+{% endif %}
 
-{% include "auction/auction_place_bid.html" %}
+<h1>Bids history</h1>
+
+{% for bid in bids_history %}
+    <div>
+        Bidder: {{ bid.bidder }} {{ bid.timestamp }}
+        <br>
+        Amount: {{ bid.bid }}$
+    </div>
+{% endfor %}
 
 <!-- Add the JavaScript logic -->
 <script>

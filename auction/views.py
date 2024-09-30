@@ -41,6 +41,21 @@ class AuctionDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = PlaceBidForm(auction=self.object) 
+        auction = self.get_object()
+        bids_history = auction.bids.all()
+        context["bids_history"] = bids_history
+
+        if not auction.active:
+            if auction.seller == self.request.user:
+                context["seller_message"] = "Your auction has been closed"
+
+            last_bid = auction.bids.last()
+            if last_bid:
+                bidder = last_bid.bidder
+                if bidder == self.request.user:
+                    context["bidder_won_message"] = "You are the winner of this bid"
+            else:
+                context["bidder_won_message"] = "No bids were placed."
         return context
     
 
@@ -91,6 +106,7 @@ class PlaceBidView(FormView):
     def form_valid(self, form):
         bid = form.save(commit=False)
         bid.auction = self.auction
+        self.auction.make_unactive()
         bid.bidder = self.request.user
         bid.save()
 
